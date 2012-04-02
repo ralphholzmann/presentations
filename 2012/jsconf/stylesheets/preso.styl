@@ -1,0 +1,169 @@
+@import 'nib'
+
+theme( name, bgStart, bgStop, slideStart, slideStop, linkColor )
+  body.{name}
+    background bgStart
+    background linear-gradient( top, bgStart, bgStop )
+    section 
+      background-image linear-gradient( top, slideStart, slideStop )
+      a 
+        color linkColor
+      h1, h2
+        background-image linear-gradient( top, #EC1C24, #9D1218 )
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.4) 
+        color: #fff;
+      h2
+        width: 776px
+        padding: 12px 24px
+        border-radius: 12px
+        margin-left -12px
+        text-shadow 0px 2px 2px rgba(0, 0, 0, 0.4) 
+      h1
+        width: 800px
+        padding: 24px
+        text-shadow 0px 4px 2px rgba(0, 0, 0, 0.4) 
+        margin-left: -24px;
+        border-radius: 18px
+        margin-top 136px
+
+body 
+  overflow hidden;
+  color #222;
+  text-shadow rgba(0, 0, 0, 0.2) 0 2px 3px;
+
+.center 
+  text-align center;
+
+#wrap 
+  width 800px;
+  height 600px;
+  margin -300px 0 0 -400px;
+  position absolute;
+  top 50%;
+  left 50%;
+  overflow visible;
+  transition all .4s ease-out;
+
+section 
+  width 800px;
+  height 600px;
+  background-clip padding-box;
+  border-radius 24px 0 24px 0;
+  padding 0;
+  margin-bottom 120px;
+  display none;
+  position absolute;
+  transition top .2s ease-out
+  font-size 22px;
+  line-height 1.5;
+  font-family "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-shadow 0px 0px 12px #000;
+
+  &.active 
+    display block;
+    position absolute;
+
+  &.past 
+    opacity 0;
+    top -2160px;
+
+  &.previous 
+    top -720px;
+
+  &.current 
+    top 0;
+
+  &.next 
+    top 720px;
+
+  &.future 
+    opacity 0;
+    top 1440px;
+
+  a 
+    text-decoration none;
+    display inline-block;
+    line-height 1.5;
+    border-bottom 1px solid rgba(153, 51, 51, .7);
+
+  a:visited 
+    border-bottom 1px solid rgba(153, 51, 51, .8);
+    color rgba(153, 51, 51, .8);
+
+  h1 
+    background-color rgba(237, 235, 212, 0.9);
+    padding 24px 0;
+    font-size 72px;
+    line-height 72px;
+    font-weight 200;
+    box-shadow 0 0 6px rgba(0, 0, 0, 0.2);
+    text-align center;
+    margin-bottom 0;
+
+    small 
+      font-size 50%;
+
+  h2, h3 
+    background-color rgba(237, 235, 212, 0.9);
+    margin 36px 0 24px 0;
+    padding 0 24px;
+    font-size 48px;
+    line-height 72px;
+    font-weight 200;
+    box-shadow 0 0 6px rgba(0, 0, 0, 0.2);
+    text-align left;
+
+  h3 
+    font-size 32px;
+    line-height 48px;
+    padding 0 18px;
+
+  ul, ol 
+    padding 0;
+    margin 0;
+
+  li 
+    margin 0 64px;
+    font-size 32px;
+    line-height 48px;
+    list-style-position outside;
+    padding 4px;
+
+    li 
+      padding 0;
+      margin 0 32px;
+      font-size 26px;
+      line-height 39px;
+
+    &:hover,
+    code 
+      background-color rgba(255,255,255, 0.2);
+      box-shadow 0 0 6px rgba(0, 0, 0, 0.1);
+      border-radius 12px;
+
+
+
+del 
+  opacity 0.4;
+
+ins 
+  text-decoration none;
+  font-style italic;
+
+code 
+  padding 0 6px;
+
+.syntaxhighlighter code 
+  box-shadow none;
+  border-radius 0;
+  text-shadow none;
+
+// Setup themes
+theme( "default", #0D2833, #0D2833, #D4E9CF, #fff, #993333 )
+theme( "packers", #313F36, #313F36, #F2C800, #D4D4D4, #993333 )
+theme( "txjs", #331515, #451f1f, #d2eaee, #afdee6, #993333 );
+theme( "bitovi", #2D2D2D, #2d2d2d, #F1F4F4, #F1F4F4, #CD181F );
+
+body.bitovi
+  section
+    background-image url(../imgs/body.png)

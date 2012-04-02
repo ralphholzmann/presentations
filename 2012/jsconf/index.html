@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <link rel=stylesheet href=stylesheets/preso.css />
+
+    <!-- Used for dynamic window resizing -->
+    <style id=style type=text/css></style>
+
+    <title>Enjoying the View with Live Bindings</title>
+    <script src=javascript/modernizr.custom.30668.js></script>
+  </head>
+  <body class=bitovi>
+
+    <div id=wrap>
+
+      <section id=s1>
+        <h1>Enjoying the View<br />with Live Bindings</h1>
+        <p class="center">
+          By <a target="_blank" href="http://twitter.com/ralphholzmann">@ralphholzmann</a>
+        </p>
+      </section>
+
+      <section id="s2">
+        <h2>Ralph Holzmann</h2>
+        <ul>
+          <li>JavaScript Developer at <del>Jupiter</del> <ins><a target=_blank href="http://bitovi.com/">Bitovi</a></ins>
+            <ul>
+              <li>Creators of <a target=_blank href="http://canjs.us">CanJS</a></li>
+            </ul>
+          </li>
+          <li>Fond du Lac, WI</li>
+          <li>Co-author of <a target="_blank" href="https://github.com/SlexAxton/yepnope.js">yepnope.js</a></li>
+          <li>Creator of Send to Dropbox</li>
+          <li>Husband and father of <del>two</del> <ins>three</ins> boys</li>
+        </ul>
+      </section>
+
+      <section id="s3">
+        <h2>Babbys</h2>
+        <img class=center src="imgs/family.jpg" width="80%" style="display:block; margin: 0 auto" />
+      </section>
+
+      <section id="s4">
+        <h2>Live Bindings</h2>
+        <ul>
+          <li>What is it?</li>
+          <li>Implementing it correctly</li>
+          <li>Cases to Cover</li>
+          <li>EJS</li>
+        </ul>
+      </section>
+
+      <section id="s5">
+        <h2>What is it‽</h2>
+        <ul>
+          <li>
+            Live binding is an extension of the Observable Pattern that 
+            automatically binds data changes to view updates.
+          </li>
+          <li>
+            Call render once! Abstracts away view updating code.
+          </li>
+        </ul>
+
+      </section>
+
+      <section>
+        <h2>Example in CanJS</h2>
+        <div style=font-size:90%>
+        <pre class="brush: js">var profileController = can.Control({
+
+  init : function() {
+    this.renderView();
+  },
+
+  renderView : function() {
+    can.view( "profile.ejs", {
+      user : this.options.user
+    }).then( this.proxy( function( fragment ) {
+      this.element.append( fragment );
+    }));
+  },
+
+  "{user} change" : function() {
+    this.renderView();
+  }
+
+});</pre>
+</div>
+      </section>
+
+      <section>
+        <h2>Example in CanJS (continued)</h2>
+        <pre class="brush: js">// Example user data
+var user = new can.Observe({
+  name : "Alex",
+  occupation : "Labs Engineer",
+  location : "TX",
+});
+
+// Instantiate
+var profile = new profileController("#profile", {
+  user : user
+});
+
+// Later on... perhaps in another controller
+user.attr("occupation", "Gingerbread Man");
+</pre>
+      </section>
+
+
+      <section class="center">
+        <h2>Example in CanJS (so much win)</h2>
+        <pre class="brush: js">var profileController = can.Control({
+
+  init : function() {
+    can.view( "profile.ejs", {
+      user : this.options.user
+    }).then( this.proxy( function( fragment ) {
+      this.element.append( fragment );
+    }));
+  }
+
+});</pre>
+      </section>
+
+      <section class="center">
+        <h2>Implementing Live Binding Correctly</h2>
+        <ul>
+          <li>
+            The goal is to <b>not</b> to simply re-render the entire template 
+            after each update to the <code>data</code>.
+          </li>
+          <li>
+            The larger and more complex your template is, the more the browser
+            has to reflow/repaint.
+          </li>
+          <li>
+            If you're only updating a single property, why re-render <b>all</b> 
+            the data? Only re-render what has changed.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Three cases to consider</h2>
+        <ul>
+          <li>Text</li>
+        </ul>
+        <pre class="brush: js">&lt;%=user.attr("name")%&gt;</pre>
+        <ul>
+          <li>HTML</li>
+        </ul>
+        <pre class="brush: js">&lt;div&gt;&lt;%=user.attr("name")%>&lt;/div&gt;</pre>
+        <ul>
+          <li>Attributes</li>
+        </ul>
+        <div style="font-size: 85%">
+          <pre class="brush: html">&lt;span&lt;% if( user.attr("location") == "TX" { %&gt; class="yehaw"&lt;% } %&gt;</pre>
+        </div>
+      </section>
+
+      <section>
+        <h2>Implementing Live Binding</h2>
+        <ul>
+          <li>
+            Rather than use <code>innerHTML</code> or <code>String</code>s, 
+            create DOM fragments.
+          </li>
+          <li>
+            DOM fragments 
+          </li>
+        </ul>
+
+      </section>
+
+      <section>
+        <h2>How CanJS and EJS handle Text</h2>
+      </section>
+
+      <section>
+        <b style="color: red; display: block; text-align: center; font-size: 600px; line-height: 470px;"> ⃠</b>
+        <em style="color: #222; font-family: monospace; position: absolute; top: 0; left: 0; text-align: center; font-size: 96px; line-height: 96px; color: black; margin-top: 170px; text-shadow: 0px 0px 12px #D2EAEE, 0 0 12px #555;">Don't be stupid<br /><small style="font-size: 64px">plz</small></em>
+      </section>
+
+      <section>
+        <h2>Contact Information</h2>
+        <ul>
+          <li>Emails at ralph [at] bitovi [dot] com</li>
+          <li>Twitter <a target="_blank" href="http://twitter.com/ralphholzmann">@ralphholzmann</a></li>
+          <li>ralphholzmann on freenode</li>
+          <li><code>/join</code> <code>#jquery</code>, <code>#yepnope</code>, <code>#html5</code></li>
+        </ul>
+      </section>
+
+    </div>
+    
+
+    <link rel=stylesheet href=syntaxhighlighter/styles/shCore.css />
+    <link rel=stylesheet href=syntaxhighlighter/styles/shThemeEclipse.css />
+    <script src=syntaxhighlighter/scripts/shCore.js></script>
+    <script src=syntaxhighlighter/scripts/shAutoloader.js></script>
+    <script src=javascript/jquery-1.7.2.min.js></script>
+    <script src=javascript/slides.js></script>
+  </body>
+</html>
