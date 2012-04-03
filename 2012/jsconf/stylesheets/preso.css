@@ -46,4 +46,4 @@ body.bitovi section a{color:#cd181f}
 body.bitovi section h1,body.bitovi section h2{background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, #ec1c24), color-stop(1, #9d1218));background-image:-webkit-linear-gradient(top, #ec1c24 0%, #9d1218 100%);background-image:-moz-linear-gradient(top, #ec1c24 0%, #9d1218 100%);background-image:linear-gradient(top, #ec1c24 0%, #9d1218 100%);-webkit-box-shadow:0 4px 4px rgba(0,0,0,0.40);-moz-box-shadow:0 4px 4px rgba(0,0,0,0.40);box-shadow:0 4px 4px rgba(0,0,0,0.40);color:#fff}
 body.bitovi section h2{width:776px;padding:12px 24px;-webkit-border-radius:12px;-moz-border-radius:12px;border-radius:12px;margin-left:-12px;text-shadow:0 2px 2px rgba(0,0,0,0.40)}
 body.bitovi section h1{width:800px;padding:24px;text-shadow:0 4px 2px rgba(0,0,0,0.40);margin-left:-24px;-webkit-border-radius:18px;-moz-border-radius:18px;border-radius:18px;margin-top:136px}
-body.bitovi section{background-image:url("../imgs/body.png")}
+body.bitovi section{background-image:url("../imgs/logo.png"),url("../imgs/body.png");background-position:98% 98%,center;background-repeat:no-repeat,repeat}

@@ -26,7 +26,13 @@
         <ul>
           <li>JavaScript Developer at <del>Jupiter</del> <ins><a target=_blank href="http://bitovi.com/">Bitovi</a></ins>
             <ul>
-              <li>Creators of <a target=_blank href="http://canjs.us">CanJS</a></li>
+              <li>
+                Creators of <a target=_blank href="http://canjs.us">CanJS</a>, 
+                <small><a target=_blank href=http://javascriptmvc.com>JavaScriptMVC</a></small>,
+                <small><small>Steal</small></small>, 
+                <small><small><small>FuncUnit</small></small></small>,
+                <small><small><small><small>DocumentJs</small></small></small></small>
+              </li>
             </ul>
           </li>
           <li>Fond du Lac, WI</li>
@@ -44,25 +50,99 @@
       <section id="s4">
         <h2>Live Bindings</h2>
         <ul>
+          <li>Motivation</li>
           <li>What is it?</li>
           <li>Implementing it correctly</li>
           <li>Cases to Cover</li>
-          <li>EJS</li>
         </ul>
       </section>
 
-      <section id="s5">
-        <h2>What is it‽</h2>
-        <ul>
-          <li>
-            Live binding is an extension of the Observable Pattern that 
-            automatically binds data changes to view updates.
-          </li>
-          <li>
-            Call render once! Abstracts away view updating code.
-          </li>
-        </ul>
+      <section>
+        <h2>Sample EJS Template</h2>
+        <pre class="brush: js">// profile.ejs
+&lt;h2&gt;&lt;%= user.name %&gt;&lt;/h2&gt;
+&lt;small&gt;
+  A &lt;%= user.occupation %&gt;
+  from &lt;%= user.location %&gt;.
+&lt;/small&gt;</pre>
+        <pre class="brush: js">// Example user data
+var user = {
+  name : "Alex",
+  occupation : "Labs Engineer",
+  location : "TX",
+}
+</pre>
+      </section>
 
+
+      <section>
+        <h2>Example in CanJS</h2>
+        <div style=font-size:90%>
+        <pre class="brush: js">var profileController = can.Control({
+
+  init : function() {
+
+    can.view( "profile.ejs", {
+      user : this.options.user
+    }).then( this.proxy( function( fragment ) {
+      this.element.append( fragment );
+    }));
+
+  }
+
+});
+
+var controller = new profileController("#foo", {
+  user : user
+});
+
+</pre>
+</div>
+      </section>
+
+      <section>
+        <h2>Output</h2>
+        <pre class="brush: html">
+
+&lt;div id="foo"&gt;
+  &lt;h2&gt;Alex&lt;/h2&gt;
+  &lt;small&gt;
+    A Labs Engineer
+    from TX.
+  &lt;/small&gt;
+&lt;/div&gt;
+</pre>
+      </section>
+
+      <section>
+        <h2>Example in CanJS (continued)</h2>
+        <pre class="brush: js">// Later on... perhaps in another controller
+user.occupation = "Gingerbread Man";
+
+// This sucks...
+profile.init();
+
+</pre>
+      </section>
+
+      <section>
+        <h2>Observables to the Rescue</h2>
+        <pre class="brush: js">// Example user data
+var user = new can.Observe({
+  name : "Alex",
+  occupation : "Labs Engineer",
+  location : "TX",
+});
+
+// Instantiate
+var profile = new profileController("#profile", {
+  user : user
+});
+
+// Later on...
+user.attr("occupation", "Gingerbread Man");
+
+</pre>
       </section>
 
       <section>
@@ -86,28 +166,38 @@
     this.renderView();
   }
 
-});</pre>
-</div>
-      </section>
+});
+</pre>
+</section>
+
+<section>
+<h2>This also sucks.</h2>
+<ul>
+  <li>Re-renders the whole template</li>
+  <li>Manual <code>function</code> calling to update the view.
+  <pre class="brush: js">"{user} change" : function() {
+    this.renderView();
+}</pre>
+  </li>
+  <li>What if the view could be aware of the changes to the data?</li>
+
+</ul>
+
+</section>
+
 
       <section>
-        <h2>Example in CanJS (continued)</h2>
-        <pre class="brush: js">// Example user data
-var user = new can.Observe({
-  name : "Alex",
-  occupation : "Labs Engineer",
-  location : "TX",
-});
-
-// Instantiate
-var profile = new profileController("#profile", {
-  user : user
-});
-
-// Later on... perhaps in another controller
-user.attr("occupation", "Gingerbread Man");
+        <h2>Sample EJS Template</h2>
+        <pre class="brush: js">// profile.ejs
+&lt;h2&gt;&lt;%= user.attr("name") %&gt;&lt;/h2&gt;
+&lt;small&gt;
+  A &lt;%= user.attr("occupation") %&gt;
+  from &lt;%= user.attr("location") %&gt;.
+&lt;/small&gt;</pre>
 </pre>
-      </section>
+
+</section>
+
 
 
       <section class="center">
@@ -125,6 +215,20 @@ user.attr("occupation", "Gingerbread Man");
 });</pre>
       </section>
 
+      <section id="s5">
+        <h2>What is it‽</h2>
+        <ul>
+          <li>
+            Live binding is an extension of the Observable Pattern that 
+            automatically binds data changes to view updates.
+          </li>
+          <li>
+            Call render once! Abstracts away view updating code.
+          </li>
+        </ul>
+
+      </section>
+
       <section class="center">
         <h2>Implementing Live Binding Correctly</h2>
         <ul>
@@ -137,10 +241,51 @@ user.attr("occupation", "Gingerbread Man");
             has to reflow/repaint.
           </li>
           <li>
-            If you're only updating a single property, why re-render <b>all</b> 
-            the data? Only re-render what has changed.
+            If you're only updating a single property, why re-render the <b>entire</b> 
+            view? Only re-render what has changed.
           </li>
         </ul>
+      </section>
+
+
+      <section>
+        <h2>Implementing Live Binding in EJS</h2>
+        <ul>
+          <li>
+            EJS wraps all statements in <code>function</code>s. So the following
+            statement:
+            <div style="font-size: 70%">
+              <pre class="brush: js">&lt;%= user.attr("location") %&gt;</pre>
+            </div>
+          </li>
+          <li>
+            Becomes...
+            <div style="font-size: 70%">
+              <pre class="brush: js">function() { return user.attr("location"); }</pre>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Implementing Live Binding in EJS</h2>
+        <ul>
+          <li>
+            Determine if there are any <code>Observable</code>s referenced from
+            within the template. 
+            <div style="font-size: 70%">
+              <pre class="brush: js">&lt;%= user.attr("location") %&gt;</pre>
+            </div>
+          </li>
+          <li>
+            Bind that <code>function</code> to changes to the <code>Observable</code>.
+          </li>
+          <li>
+            On <code>change</code>, re-run the <code>function</code> and replace
+            the corresponding fragment with the result.
+          </li>
+        </ul>
+
       </section>
 
       <section>
@@ -162,21 +307,34 @@ user.attr("occupation", "Gingerbread Man");
       </section>
 
       <section>
-        <h2>Implementing Live Binding</h2>
+        <h2>Handling Attributes</h2>
         <ul>
           <li>
-            Rather than use <code>innerHTML</code> or <code>String</code>s, 
-            create DOM fragments.
+            The Problem
+            <div style="font-size: 50%">
+              <pre class="brush: html">&lt;span&lt;% if( user.attr("location") == "TX" { %&gt; class="yehaw"&lt;% } %&gt;</pre>
+            </div>
           </li>
-          <li>
-            DOM fragments 
-          </li>
+          <li>Determine the name of the attribute being set.</li>
+          <li>Cycle through the attributes looking for a match, and update.</li>
         </ul>
-
       </section>
 
       <section>
-        <h2>How CanJS and EJS handle Text</h2>
+        <h2>Getting it to work in IE6+</h2>
+        <li>Tag map
+<div style="font-size: 80%">
+<pre class="brush: js">var tagMap = {
+  ""    : "span", 
+  table : "tr", 
+  tr    : "td", 
+  ol    : "li", 
+  ul    : "li", 
+  tbody : "tr",
+  thead : "tr",
+  tfoot : "tr"
+};</pre>
+</div>
       </section>
 
       <section>
