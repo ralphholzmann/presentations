@@ -1,0 +1,444 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <link rel=stylesheet href=stylesheets/preso.css />
+
+    <!-- Used for dynamic window resizing -->
+    <style id=style type=text/css></style>
+
+    <title>Past, Present and Future of Inheritance in JavaScript</title>
+    <script src=javascript/modernizr.custom.30668.js></script>
+  </head>
+  <body class=bitovi>
+
+    <div id=wrap>
+
+      <section id=s1>
+        <h1><small>Past, Present and Future of</small> <br/>Inheritance in JavaScript</h1>
+        <p class="center">
+          By <a target="_blank" href="http://twitter.com/ralphholzmann"><del>@ralphholzmann</del></a>
+          <ins><a target="_blank" href="http://twitter.com/rlph">@rlph</a></ins>
+        </p>
+      </section>
+
+      <section id="s2">
+        <h2>Ralph Holzmann</h2>
+        <ul>
+          <li>Software Engineer II at <a target=_blank href="http://twitter.com/">Twitter</a>
+            <ul>
+              <li>
+                Work with me!
+              </li>
+            </ul>
+          </li>
+          <li>Fond du Lac, WI</li>
+          <li>Co-author of <a target="_blank" href="https://github.com/SlexAxton/yepnope.js">yepnope.js</a></li>
+          <li>Creator of <a href="http://sendtodropbox.com/">Send to Dropbox</a></li>
+          <li>Husband and father of <ins>three</ins> boys</li>
+        </ul>
+      </section>
+
+      <section id="s3">
+        <h2>Babbys</h2>
+        <img alt="babbys" class=center src="imgs/family.jpg" width="80%" style="display:block; margin: 0 auto" />
+      </section>
+
+      <section id="s4">
+        <h2>Inheritance in JavaScript</h2>
+        <ul>
+          <li>Prototypal Inheritance: Wat?</li>
+          <li>Differences from Classical inheritance</li>
+          <li>Pseudo-classical inheritance</li>
+          <li>Past - ES3</li>
+          <li>Present - ES5, Abstractions, Transpilers</li>
+          <li>Future - ES6 and Transpilers</li>
+        </ul>
+      </section>
+
+      <section id="s5">
+        <h2>Prototypal Inheritance</h2>
+        <img alt="WAT" class=center src="imgs/wat.jpg" width="80%" style="display:block; margin: 0 auto" />
+      </section>
+
+      <section>
+        <h2>Things to know before continuing</h2>
+        <ul>
+          <li><code>this</code> keyword</li>
+          <li>
+            <code>new</code> operator
+            <ul>
+              <li><code>var user = new User();</code></li>
+              <li><code>var user = User();</code></li>
+            </ul>
+          </li>
+          <li>
+            <code>function.prototype.</code>
+            <ul>
+              <li><code>call</code></li>
+              <li><code>apply</code></li>
+              <li><code>bind</code></li>
+            </ul>
+          </li>
+          <li><code>instanceof</code> operator</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>How does it work?</h2>
+        <ul>
+          <li>&ldquo;Almost everything in JavaScript is an object&rdquo;</li>
+          <li>Objects inherit from other objects.</li>
+          <li>Everything ultimately inherits from <code>Object</code></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>How does it work? (Continued)</h2>
+        <ul>
+          <li>Inheritance is assigned through a constructor's <code>prototype</code> property</li>
+          <li>Inheritance is accessed through an object's <code>__proto__</code> property</li>
+          <li>When accessing a property on an object, if it doesn't exist, it looks for it in the <code>__proto__</code> chain.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Crotchford on Prototypal Inheritance</h2>
+        <img alt="WAT" class=center src="imgs/crockford.png" width="30%" style="display:block; margin: 0 auto" />
+        <blockquote>
+          &ldquo;Prototypal inheritance is more powerful than classical 
+          inheritance, because prototypal inheritance can emulate classical
+          inheritance, but classical inhertiance cannot emulate prototypal
+          inheritance.&rdquo;
+        </blockquote>
+      </section>
+
+      <section>
+        <h2>Classical vs Prototypal</h2>
+        <table><tbody>
+          <tr>
+            <th>Java</th>
+            <th>JavaScript</th>
+          </tr>
+          <tr>
+            <td>Strongly-typed</td>
+            <td>Loosely-typed</td>
+          </tr>
+          <tr>
+            <td>Static</td>
+            <td>Dynamic</td>
+          </tr>
+          <tr>
+            <td>Classical</td>
+            <td>Prototypal</td>
+          </tr>
+          <tr>
+            <td>Classes</td>
+            <td>Functions</td>
+          </tr>
+          <tr>
+            <td>Constructors</td>
+            <td>Functions</td>
+          </tr>
+          <tr>
+            <td>Methods</td>
+            <td>Functions</td>
+          </tr>
+        </tbody></table>
+      </section>
+
+      <section>
+        <pre class="brush: js">// Parent Constructor
+function Parent (first, last) {
+  this.first = first;
+  this.last  = last;
+}
+
+Parent.prototype.getFullName = function () {
+  return this.first + " " + this.last;
+}
+
+var me = new Parent("Ralph", "Holzmann");
+me.getFullName(); // "Ralph Holzmann"
+
+// Child Constructor
+function Child (first) {
+  this.constructor = Child;
+  this.first = first;
+}
+
+Child.prototype = me;
+
+var jack = new Child("Jack");
+jack.getFullName(); // "Jack Holzmann"</pre>
+      </section>
+
+      <section>
+        <h2>Pseudo-Classical Inheritance</h2>
+        <ul>
+          <li>Inheritance that has classical syntax…</li>
+          <li>…but is implemented using prototypal</li>
+        </ul>
+      </section>
+
+      <section>
+        <h1>The Past</h1>
+      </section>
+      
+      <section>
+        <pre class="brush: js">// Base Constructor
+function Model (id, attributes) {
+  this.id = id;
+  this.attributes = attributes;
+}
+Model.prototype.save = function () {
+  var json = JSON.stringify( this.attributes );
+  var name = this.constructor.name.toLowerCase();
+  localStorage.setItem( name + this.id, json );
+}
+
+// User Constructor
+function User (id, attributes) {
+  this.constructor = User;
+  Model.call(this, id, attributes); // "super"
+}
+User.prototype = new Model(null)
+User.prototype.save = function() {
+  $.post("/save", JSON.stringify( this.attributes ));
+  Model.prototype.save.call(this); // "super"
+}</pre>
+      </section>
+
+      <section>
+        <h2>Things to note</h2>
+        <ul>
+          <li>The <code>new</code> keyword</li>
+          <li><code>super</code> is verbose and cumbersome.</li>
+          <li>It's <i>ugly.</i></li>
+        </ul>
+      </section>
+
+      <section>
+        <h1>Enter Abstractions…</h1>
+      </section>
+
+      <section>
+        <h2>Enter Abstractions…</h2>
+          <li><a href="http://dean.edwards.name/weblog/2006/03/base/">Dean Edward's</a> <time>March, 2006</time></li>
+        </ul>
+        <pre class="brush: js">var object = new Base();
+
+object.extend({
+  helloWorldText: "Hello World!",
+  sayHelloWorld: function () {
+    console.log( this.helloWorldText );
+  }
+});
+
+object.sayHelloWorld(); // "Hello World!" </pre>
+      </section>
+
+      <section>
+        <h2>Present - ES5 and Abstractions</h2>
+        <ul>
+          <li><a href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig Simple Inheritance</a> <time>March, 2008</time></li>
+        </ul>
+        <div style="font-size: 90%">
+        <pre class="brush: js">var Person = Class.extend({
+  init: function(isDancing){
+    this.dancing = isDancing;
+  }
+});
+var Ninja = Person.extend({
+  init: function(){
+    this._super( false );
+  }
+});
+
+var p = new Person(true);
+p.dancing; // => true
+
+var n = new Ninja();
+n.dancing; // => false</pre></div>
+      </section>
+
+      <section>
+        <h1>The Present</h1>
+      </section>
+
+      <section>
+        <h2><code>Object.create</code></h2>
+        <ul>
+          <li>ES5 introduces <code>Object.create</code></li>
+          <li>Automates the prototype chain dance</li>
+        </ul>
+        <pre class="brush: js">var a = {a: 1}; 
+// a → Object.prototype → null
+ 
+var b = Object.create(a);
+// b → a → Object.prototype → null
+console.log(b.a); // 1 (inherited)
+ 
+var c = Object.create(b);
+// c → b → a → Object.prototype → null</pre>
+      </section>
+
+      <section>
+        <h2><code>Object.create</code> Shim</h2>
+        <pre class="brush: js">if (!Object.create) {
+    Object.create = function (o) {
+        function F() {}
+        F.prototype = o;
+        return new F();
+    };
+}</pre>
+      </section>
+
+      <section>
+        <h2>Newer Abstractions…</h2>
+        <ul>
+          <li>Backbone.js</li>
+        </ul>
+        <pre class="brush: js">var ObjectClass = Backbone.Model.extend({
+
+  helloWorldText: "Hello World!",
+
+  sayHelloWorld: function () {
+    console.log( this.helloWorldText );
+  }
+
+});
+
+var object = new ObjectClass();
+
+object.sayHelloWorld(); // "Hello World!"</pre>
+      </section>
+
+
+      <section>
+        <h2>Newer Abstractions…</h2>
+        <ul>
+          <li>CanJS</li>
+        </ul>
+        <pre class="brush: js">var ObjectClass = can.Construct({
+
+  helloWorldText: "Hello World!",
+
+  sayHelloWorld: function () {
+    console.log( this.helloWorldText );
+  }
+
+});
+
+var object = new ObjectClass();
+
+object.sayHelloWorld(); // "Hello World!"</pre>
+      </section>
+
+      <section>
+        <h2>Transpilers</h2>
+        <ul>
+          <li>CoffeeScript</li>
+          <li>TypeScript</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>ES6 Classes</h2>
+        <ul>
+          <li>What we've all be waiting for</li>
+          <li>Pseudoclassical inheritance with <code>class</code> syntax</li>
+          <li>Transpiler friendly</li>
+        </ul>
+      </section>
+
+      <section>
+        <h1>The Future</h1>
+      </section>
+
+      <section>
+        <h2>ES6 Classes</h2>
+        <pre class="brush: js">class Model {
+  constructor( id, attributes ) {
+    this.id = id;
+    this.attributes = attributes;
+  }
+  save() {
+    var json = JSON.stringify( this.attributes );
+    window.localStorage.setItem( this.id, json );
+  }
+}
+
+class User extends Model {
+  save() {
+    $.post("/save", JSON.stringify( this.attributes ));
+    super();
+  }
+}
+var ralph = new User(1, { name: "Ralph" });</pre>
+      </section>
+
+      <section>
+        <h2>Bonus! Mixin's</h2>
+        <pre class="brush: js">// Vanilla implementation
+function Model( id, attributes ) { /* … */ }
+
+function EventEmitterMixin() {
+  this.emit = function( event, data ) { /* … */ }
+  this.on = function( event, callback ) { /* … */ }
+  this.off = function( event, callback ) { /* … */ }
+}
+
+function User() {
+  Model.call(this)
+  EventEmitterMixin.call(this)
+}
+User.prototype = new Model(null);
+
+var ralph = new User(0, { name: "Ralph Holzmann" });
+ralph.emit("name", ralph.name);
+</pre>
+      </section>
+
+      <section>
+        <h2>Bonus! Mixin's</h2>
+        <pre class="brush: js">//Library implementation
+var EventEmitterMixin = {
+  emit: function( event, data ) { /* … */ },
+  on: function( event, callback ) { /* … */ }
+  off: function( event, callback ) { /* … */ }
+};
+
+function User() {
+  Model.call(this);
+  $.extend(this, EventEmitterMixin);
+}
+User.prototype = new Model();
+
+var ralph = new User(0, { name: "Ralph Holzmann" });
+ralph.emit("name", ralph.name);
+
+</pre>
+      </section>
+
+      <section>
+        <h2>Reach Out!</h2>
+        <ul>
+          <li>Emails at rholzmann [at] twitter [dot] com</li>
+          <li>Twitter <a target="_blank" href="http://twitter.com/rlph">@rlph</a></li>
+          <li>ralphholzmann on freenode</li>
+          <li><code>/join</code> <code>#jquery</code>, <code>#html5</code>, <code>#webplatform</code>, <code>##javascript</code>, <code>#node.js</code></li>
+        </ul>
+      </section>
+
+    </div>
+    
+
+    <link rel=stylesheet href=syntaxhighlighter/styles/shCore.css />
+    <link rel=stylesheet href=syntaxhighlighter/styles/shThemeEclipse.css />
+    <script src=syntaxhighlighter/scripts/shCore.js></script>
+    <script src=syntaxhighlighter/scripts/shAutoloader.js></script>
+    <script src=javascript/jquery-1.7.2.min.js></script>
+    <script src=javascript/slides.js></script>
+  </body>
+</html>
