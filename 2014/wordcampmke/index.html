@@ -1,0 +1,527 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <link rel=stylesheet href=stylesheets/preso.css />
+
+    <!-- Used for dynamic window resizing -->
+    <style id=style type=text/css></style>
+
+    <title>JavaScript Best Practices in 2014</title>
+    <link rel=stylesheet href=syntaxhighlighter/styles/shCore.css />
+    <link rel=stylesheet href=syntaxhighlighter/styles/shThemeEclipse.css />
+    <script src=javascript/modernizr.custom.30668.js></script>
+  </head>
+  <body class=bitovi>
+
+    <div id=wrap>
+
+      <section id=s1>
+        <h1>JavaScript Best Practices<br/>in 2014</h1>
+        <p class="center">
+           Ralph Holzmann &middot; <a target="_blank" href="https://twitter.com/rlph">@rlph</a> &middot; WordCamp Milwaukee 2014
+        </p>
+      </section>
+
+      <section id="s2">
+        <h2>Ralph Holzmann</h2>
+        <div class="center">
+          <img src="imgs/twitter-bird-light-bgs.png" alt="Twitter Logo Ya'll" />
+          <img src="imgs/vine_logo_lrg_green.png" alt="Vine Logo Ya'll" style="padding-bottom: 96px"/>
+        </div>
+        <ul>
+          <li>Software Engineer at <a target=_blank href="http://vine.co/">Vine</a>, Web Team
+          <li>Remotely from Fond du Lac, WI</li>
+        </ul>
+      </section>
+
+      <section>
+        <h1 class="center">2014?</h1>
+      </section>
+
+      <section id="s2">
+        <h2>Pro JavaScript Techniques</h2>
+        <div class="center">
+          <img src="imgs/pjt.jpg" height=416 alt="Pro JavaScript Techniques" />
+        </div>
+      </section>
+
+      <section>
+        <h2>W3Fools</h2>
+        <div class="center">
+          <img src="imgs/w3fools.jpg" height=416 alt="Pro JavaScript Techniques" />
+        </div>
+      </section>
+
+      <section>
+        <h1 class="center">2014.</h1>
+      </section>
+
+      <section>
+        <h1 class="center">1. Runtime assertions</h1>
+      </section>
+
+      <section>
+        <h2><code>assert</code></h2>
+
+        <div style="font-size: 140%; margin-top: 120px;">
+        <pre class="brush: js" >function assert (message, test) {
+  if (!test) throw new Error(message);
+}</pre>
+        <ul>
+          <li>Inline unit testing</li>
+          <li>More meaningful error messages</li>
+        </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Example</h2>
+        <div style="font-size: 75%;">
+        <pre class="brush: js" >function MyWidget (options) {
+  assert("MyWidget requires an options object", typeof options === "object");
+  /* ... */
+}
+
+MyWidget.prototype.swap = function (first, second) {
+  assert("MyWidget#swap requires two arguments", arguments.length === 2);
+  /* ... */
+}
+
+MyWidget.prototype.makeDecision = function (value) {
+  switch (value) {
+    case "foo":
+      this.doOneThing();
+      break;
+    case "bar":
+      this.doAnotherThing();
+      break;
+    default:
+      assert("Invalid argument for MyWidgit#makeDecision")
+  }
+}
+</pre>
+</div>
+      </section>
+
+      <section>
+        <h1 class="center">2. Promises</h1>
+      </section>
+
+      <section>
+        <h2>Promises</h2>
+        <ul>
+          <li>An object that represents a single value that exists or will exist in the future.</li>
+          <li>Provides constructs to mimic <code>try-catch-finally</code> over a set of async operations.</li>
+          <li>Popularized by Dojo and jQuery Deferreds</li>
+          <li>Refined, spec'd and slated for ES6</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Promises (continued)</h2>
+        <ul>
+          <li>Perfect for things like
+            <ul>
+              <li>AJAX requests on the client</li>
+              <li>Database fetches on the server (Node.js)</li>
+            </ul>
+          </li>
+          <li>A promise can be <code>unfulfilled</code>, <code>accepted</code>, or <code>rejected</code>.</li>
+          <li>Access a promise's value and handle it's error using <code>.then</code></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Promise Example</h2>
+        <pre class="brush: js">var promise = new Promise(function(resolve, reject) {
+  // do a thing, possibly async, then…
+
+  if (/* everything turned out fine */) {
+    resolve("Stuff worked!");
+  } else {
+    reject(new Error("It broke"));
+  }
+});
+
+promise.then(function(result) {
+  console.log(result); // "Stuff worked!"
+}, function(err) {
+  console.log(err); // Error: "It broke"
+});</pre>
+      </section>
+
+      <section>
+        <h2>Returning a Promise in a callback</h2>
+        <ul>
+          <li>Returning another Promise in a Promise callback allows you to chain async operations, instead of nest them.</li>
+          <li>It also allows you to handle errors anywhere in the chain of async operations.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>No callback hell</h2>
+        <pre class="brush: js">asyncThing1().then(function() {
+  return asyncThing2();
+}).then(function() {
+  return asyncThing3();
+}).catch(function(err) {
+  return asyncRecovery1();
+}).then(function() {
+  return asyncThing4();
+}, function(err) {
+  return asyncRecovery2();
+}).catch(function(err) {
+  console.log("Don't worry about it");
+}).then(function() {
+  console.log("All done!");
+});</pre>
+      </section>
+
+      <section>
+        <h2>More about Promises</h2>
+        <ul>
+          <li>HTML5 Dev Conf Video <a href="//www.youtube.com/embed/hf1T_AONQJU">Redemption from Callback Hell</a>
+          <ul>
+            <li>by Michael Jackson and Domenic Denicola</li>
+          </ul>
+          </li>
+          <li>HTML5 Rocks <a href="http://www.html5rocks.com/en/tutorials/es6/promises/">JavaScript Promises
+There and back again</a>
+          <ul>
+            <li>by Jake Archibald</li>
+          </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h1 class="center">3. Content Security Policy</h1>
+      </section>
+
+      <section>
+        <h2>What is Content Security Policy?</h2>
+        <ul>
+          <li>"[...] A policy language used to declare a set of content restrictions for a web resource [...]"</li>
+          <li>A set of rules the browser follows to prevent XSS attacks</li>
+          <li>Currently supported in Firefox and Chrome using <code>X-Content-Security-Policy</code> and <code>X-WebKit-CSP</code> headers, respectively.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Unsafe ways to inject content</h2>
+        <ul>
+          <li>JS <code>element.innerHTML = content</code></li>
+          <li>jQuery <code>$("body").html(content)</code></li>
+          <li>Mustache / Handlebars <code>{{{content}}}</code></li>
+          <li>React <code>dangerouslySetInnerHTML={{__html: content}}</code></li>
+          <li>HTML <code>&lt;p&gt;&lt;script&gt;alert(&quot;lol&quot;)&lt;/script&gt;&lt;/p&gt;</code></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Available directives</h2>
+        <ul>
+          <li>script-src, object-src, style-src, img-src, media-src, frame-src, font-src, connect-src</li>
+          <li>default-src</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><code>script-src</code> values</h2>
+        <ul>
+          <li><code>unsafe-inline</code>
+            <ul>
+              <li>Prevents inline scripts from executing</li>
+              <li>Any script tags without a <code>src</code> will be ignored</li>
+              <li><code>&lt;script&gt;alert(&quot;lol&quot;)&lt;/script&gt;</code> won't fire</li>
+            </ul>
+          </li>
+          <li><code>unsafe-eval</code>
+            <ul>
+              <li>No <code>eval</code>, <code>new Function()</code>, <code>setTimeout</code>, or <code>setInterval</code></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><code>report-uri</code></h2>
+        <ul>
+          <li>Get a JSON post anytime a user violates a CSP directive</li>
+          <li>
+            <code>Content-Security-Policy: report-uri http://example.org/csp.php</code>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><code>report-uri</code> JSON</h2>
+          <pre class="brush: js" >{
+  "csp-report": {
+    "document-uri": "http://example.org/page.html",
+    "referrer": "http://evil.example.com/haxor.html",
+    "blocked-uri": "http://evil.example.com/image.png",
+    "violated-directive": "default-src 'self'",
+    "original-policy": "default-src 'self'; report-uri http://example.org/csp.php"
+  }
+}</pre>
+        <ul>
+          <li><code>Content-Security-Policy-Report-Only</code> if you want to be cautious with existing apps.</li>
+        </ul>
+</section>
+
+      <section>
+        <h2>CSP examples</h2>
+        <ul>
+          <li>
+            <code>Content-Security-Policy: default-src 'self'</code>
+            <ul>
+              <li>A server wishes to load resources only form its own origin</li>
+            </ul>
+          </li>
+          <li>
+            <code>Content-Security-Policy: default-src https: 'unsafe-inline' 'unsafe-eval'</code>
+            <ul>
+              <li>Online banking site wishes to ensure that all of the content in its pages is loaded over SSL</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h1 class="center">4. Modules</h1>
+      </section>
+
+      <section>
+        <h2>What is a "module" in JavaScript</h2>
+        <ul>
+          <li>Portable namespace for your code</li>
+          <li>Hard parts:
+            <ul>
+              <li>"Portable"</li>
+              <li>Dependencies?</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>In the dark ages…</h2>
+        <pre class="brush: js">window.jQuery = window.$ = jQuery; // Done. Ship it.</pre>
+        <ul>
+          <li>Okay, that works for jQuery, in a browser.</li>
+          <li>There is no <code>window</code> in Node.js, for example.</li>
+          <li>What about something like Backbone.js which depends on Underscore.js?</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>CommonJS</h2>
+        <pre class="brush: js">/* Backbone.js */
+var _ = require("underscore");
+
+/* Backbone implementation goes here */
+
+module.exports = Backbone;</pre>
+        <ul>
+          <li>CommonJS implementation will pick up the underscore dependency and ensure its available.</li>
+          <li>Requires a build step or CommonJS server.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Asynchronous Module Definition (AMD)</h2>
+        <pre class="brush: js">/* Backbone.js */
+define(["underscore"], function(_) {
+
+  /* Backbone implementation goes here */
+
+  return Backbone;
+});</pre>
+        <ul>
+          <li>Works async in the browser without a build step.</li>
+          <li>Everything has to be wrapped in <code>define(fn)</code>.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Universal Module Definition (UMD)</h2>
+        <pre class="brush: js">/* Backbone.js */
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore'], factory);
+  } else if (typeof module === "object" && typeof require === "function") {
+    var _ = require("underscore");
+    module.exports = factory(_);
+  } else {
+    root.Backbone = factory(root._);
+  }
+}(this, function (_) {
+
+  /* Backbone implementation goes here */
+
+  return Backbone;
+}));</pre>
+      </section>
+
+      <section>
+        <h2>ES6 Module Definition</h2>
+        <pre class="brush: js">/* Backbone.js */
+import _ from 'underscore';
+
+/* Backbone implementation goes here */
+
+export default Backbone;
+</pre>
+<ul>
+  <li><a href="https://github.com/square/es6-module-transpiler">ES6 Module Transpiler</a></li>
+  <li>Author in ES6, export to whatever format you like.</li>
+  <li>Future proof.</li>
+</ul>
+      </section>
+
+      <section>
+        <h1 class="center">5. <code>hasOwnProperty</code></h1>
+      </section>
+
+      <section>
+        <h1 class="center">A cautionary tale</h1>
+      </section>
+
+      <section>
+        <h2>Twitter was broken in Android Firefox</h2>
+        <ul>
+          <li>Media would not display</li>
+          <li>February 2014</li>
+          <li>Media worked in version 27, but not 28</li>
+          <li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=924386">Bugzilla Bug 924386</a></li>
+          <li>What happened?</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Offending code</h2>
+        <ul>
+          <li><code>onRequestSuccess</code> handler processing response to <code>/api/media_timeline</code></li>
+        </ul>
+
+        <div style="font-size: 95%">
+        <pre class="brush: js">e.entries ? (j = "entries", i = e.entries) : e.modules ? (j =
+    "modules", i = e.modules) : a.isArray(e) ? (i = e, e = {
+    tweets: i
+}) : i = e.tweets;</pre></div>
+      </section>
+
+      <section>
+        <h2>Offending code unminified</h2>
+        <pre class="brush: js">/* Blown up... */
+var entries;
+
+if (response.entries) {
+  entries = response.entries;
+} else if (response.modules){
+  entries = response.modules;
+} else if (isArray(response)) {
+  entries = response;
+} else {
+  entries = response.tweets;
+}</pre>
+      </section>
+
+      <section>
+        <h2>Sample responses</h2>
+        <pre class="brush: js">
+        {"entries":[{},{}]}
+        
+        {"modules":[{},{}]}
+
+        [{},{}] 
+
+        {"tweets":[{},{}]}
+        </pre>
+      </section>
+
+      <section>
+        <h1>What happened between<br/>Firefox 27 and 28?</h1>
+      </section>
+
+      <section>
+        <h2>ES6 Array.prototype.entries</h2>
+        <ul>
+          <li>A new <code>Array</code> method called <code>entries</code> was added to Firefox 28</li>
+        </ul>
+
+        <div style="font-size: 130%">
+        <pre class="brush: js">/* In Firefox 27... */
+!! [].entries; // false
+
+/* but in Firefox 28 /o\ */
+!! [].entries; // true
+</pre>
+</div>
+      </section>
+
+      <section>
+        <h2>Offending code again</h2>
+        <pre class="brush: js">/* Blown up... */
+var entries;
+
+if (response.entries) {
+  entries = response.entries;
+} else if (response.modules){
+  entries = response.modules;
+} else if (isArray(response)) {
+  entries = response;
+} else {
+  entries = response.tweets;
+}</pre>
+      </section>
+
+      <section>
+        <h2>Offending code fixed</h2>
+        <pre class="brush: js">/* Blown up... */
+var entries;
+
+if (response.hasOwnProperty("entries")) {
+  entries = response.entries;
+} else if (response.modules){
+  entries = response.modules;
+} else if (isArray(response)) {
+  entries = response;
+} else {
+  entries = response.tweets;
+}</pre>
+      </section>
+
+      <section>
+        <h1 class="center">Fin.</h1>
+      </section>
+
+      <section>
+        <h2>Reach Out!</h2>
+        <ul>
+          <li>Emails at ralph@vineapp.com</li>
+          <li>Vine <a target="_blank" href="http://vine.co/ralph">vine.co/ralph</a></li>
+          <li>Twitter <a target="_blank" href="http://twitter.com/rlph">@rlph</a></li>
+          <li>ralphholzmann on freenode</li>
+          <li><code>/join</code> <code>#jquery</code>, <code>#html5</code>, <code>#webplatform</code>, <code>##javascript</code>, <code>#node.js</code></li>
+        </ul>
+      </section>
+    </div>
+
+    <script src=syntaxhighlighter/scripts/shCore.js></script>
+    <script src=syntaxhighlighter/scripts/shAutoloader.js></script>
+    <script src=javascript/jquery-1.7.2.min.js></script>
+    <script src=javascript/slides.js></script>
+    <script>
+      (function() {
+        $("#managers").on("click", "h2", function() {
+          $(".one").animate({
+            opacity: 0.2
+          }, 1000)
+        });
+      }());
+    </script>
+  </body>
+</html>
